@@ -9,16 +9,27 @@ var Player = function(game, x=256,y=256)
   this.smoothed = false;
   game.physics.enable(this);
   this.body.collideWorldBounds = true;
-  this.dmg = 2;
+  this.dmg = 5;
   this.health = this.maxHealth = 100;
 
   this.bullets = game.add.group();
-  this.weapon = game.add.weapon(16, 'bullet', 0, this.bullets);
+  this.weapon = game.add.weapon(20, 'bullet', 0, this.bullets);
+
+
   this.weapon.bulletSpeed = 400;
-  this.weapon.fireRate = 125;
-  //this.weapon.bounds = new Phaser.Rectangle(this.x, this.character.y, this.character.width, this.character.height*5);
+  this.weapon.fireRate = 100;
   this.weapon.trackSprite(this, 0, 0, false);
-  this.weapon.bulletKillType = Phaser.Weapon.KILL_WORLD_BOUNDS;
+  this.weapon.bulletLifespan = 1500;
+  this.weapon.bulletKillType = Phaser.Weapon.KILL_LIFESPAN;
+  this.weapon.fireLimit = 20;
+
+
+  this.stepA = this.game.add.audio('Step');
+  this.shooting = this.game.add.audio('Shoot',0.5);
+  this.reloading = this.game.add.audio('Reload',0.4);
+  this.weapon.onFire.add(fire, this);
+
+  // this.weapon.onFire =
 
   this.cursors = game.input.keyboard.createCursorKeys();
 
@@ -30,6 +41,12 @@ var Player = function(game, x=256,y=256)
   this.animations.add("LeftShoot", [17],12, true, true);
   this.animations.add("RightShoot", [18],12, true, true);
 
+
+  function fire()
+  {
+    customValues.activeAmmo --;
+    this.shooting.play();
+  }
 };
 
 Player.prototype = Object.create(Phaser.Sprite.prototype);
@@ -48,19 +65,16 @@ if(!this.game.input.activePointer.isDown)
 
   else if(this.cursors.down.isDown || this.game.input.keyboard.isDown(Phaser.Keyboard.S))
   {
-
     this.body.velocity.y = customValues.playerSpeed;
   }
   // HORIZONTAL
  if(this.cursors.left.isDown || this.game.input.keyboard.isDown(Phaser.Keyboard.A))
   {
-
     this.body.velocity.x = -customValues.playerSpeed;
   }
 
   else if(this.cursors.right.isDown || this.game.input.keyboard.isDown(Phaser.Keyboard.D))
   {
-
     this.body.velocity.x = customValues.playerSpeed;
   }
 }
@@ -68,33 +82,41 @@ if(!this.game.input.activePointer.isDown)
 
   if(this.cursors.up.isDown || this.game.input.keyboard.isDown(Phaser.Keyboard.W))
   {
-    this.animations.play('Up', true);
+    var anim = this.animations.play('Up', true);
+    anim.onLoop.add(function(){this.stepA.play()},this);
+
   }
 
   else if(this.cursors.down.isDown || this.game.input.keyboard.isDown(Phaser.Keyboard.S))
   {
-    this.animations.play('Down', true);
+    var anim = this.animations.play('Down', true);
+    anim.onLoop.add(function(){this.stepA.play()},this);
   }
 
   else if(this.cursors.down.isDown && this.cursors.left.isDown)
   {
-    this.animations.play('Down', true);
+    var anim = this.animations.play('Down', true);
+    anim.onLoop.add(function(){this.stepA.play()},this);
   }
 
   else if(this.cursors.left.isDown || this.game.input.keyboard.isDown(Phaser.Keyboard.A))
   {
-    this.animations.play('Left', true);
+    var anim = this.animations.play('Left', true);
+    anim.onLoop.add(function(){this.stepA.play()},this);
   }
 
   else if(this.cursors.right.isDown || this.game.input.keyboard.isDown(Phaser.Keyboard.D))
   {
-    this.animations.play('Right', true);
+    var anim = this.animations.play('Right', true);
+    anim.onLoop.add(function(){this.stepA.play()},this);
   }
 
   else
   {
     this.animations.stop();
   }
+
+
 
   if(this.game.input.activePointer.isDown && this.alive)
   {
@@ -120,7 +142,30 @@ if(!this.game.input.activePointer.isDown)
       {
           this.animations.play('LeftShoot',true);
       }
-      this.weapon.fireAtPointer();
+      if(customValues.activeAmmo > 0 && !this.reloading.isPlaying)
+      {
+        this.weapon.fireAtPointer();
 
-  }
+      }
+    }
+
+if(this.game.input.keyboard.isDown(Phaser.Keyboard.R) && customValues.ammo > 0 && !this.reloading.isPlaying)
+{
+
+    this.reloading.play();
+    this.weapon.resetShots();
+    console.log(this.x, this.y);
+
+    if((20 - customValues.activeAmmo) >= customValues.ammo)
+    {
+      customValues.activeAmmo += customValues.ammo;
+      customValues.ammo = 0;
+    }
+    else
+    {
+      customValues.ammo -= (20 - customValues.activeAmmo);
+      customValues.activeAmmo += (20 - customValues.activeAmmo);
+    }
+}
+
 };

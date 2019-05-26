@@ -9,9 +9,24 @@ Project.loadingScreen.prototype =
   preload: function()
   {
     this.load.spritesheet('hero', 'assets/hero1.png', 19, 42);
-    this.load.image('enemy', 'assets/cube1.png');
-    this.load.tilemap('map', 'assets/w.json', null, Phaser.Tilemap.TILED_JSON);
+    this.load.spritesheet('enemy', 'assets/Serot.png', 50, 47);
+    // this.load.image('enemy', 'assets/cube1.png');
+    this.load.tilemap('map', 'assets/MAP.json', null, Phaser.Tilemap.TILED_JSON);
+
+    this.load.image('tiles2', 'assets/set2.png');
+    this.load.image('tiles1', 'assets/set1.png');
     this.load.image('tiles', 'assets/set.png');
+
+    this.load.image('Aid', 'assets/aid.png');
+    this.load.image('Ammo', 'assets/ammo.png');
+
+    this.load.audio('Main_Theme', 'music/main_theme.mp3');
+    this.load.audio('Step', 'music/footstep.wav');
+    this.load.audio('Shoot', 'music/shoot1.wav');
+    this.load.audio('Reload', 'music/reload.wav');
+    this.load.audio('Die', 'music/die.wav');
+    this.load.audio('Hit', 'music/hit.wav');
+    // this.load.spritesheet('robot', 'assets/')
       // this.load.spritesheet('button', 'assets/button.png', 100, 50);
       // this.load.spritesheet('hero', 'assets/hero.png', 20, 42);
     //this.load.image('tiles', 'assets/set.png');

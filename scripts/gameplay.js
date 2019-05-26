@@ -1,91 +1,132 @@
 "use strict"
 
-var Project = Project||{};
 
+var Project = Project||{};
+var src;
 Project.gameplay = function(game){};
 
 Project.gameplay.prototype =
 {
+
   preload: function()
   {
     this.stage.backgroundColor = "#3b4047";
+    this.b;
 
     this.map = this.add.tilemap('map');
-    this.map.addTilesetImage('q','tiles');
-    this.floor = this.map.createLayer('1');
-    this.walls = this.map.createLayer('2');
+    this.map.addTilesetImage('TS2','tiles');
+    this.map.addTilesetImage('TS1','tiles1');
+    this.map.addTilesetImage('TS3','tiles2');
+    this.floor = this.map.createLayer('L1');
+    this.prewalls = this.map.createLayer('L2');
+    this.walls = this.map.createLayer('L3');
     this.floor.resizeWorld();
 
-    this.map.setCollisionByExclusion([257,373], true, '2');
-    //this.walls.debug = true;
-    //this.header = this.add.text(219, 219, "GGame", {font:"bold 32px", fill:"white", stroke:"red", strokeThickness:1})
-    //box(hero)
+    this.map.setCollisionByExclusion([], true, 'L3');
 
-    // this.cursors = this.input.keyboard.createCursorKeys();
-    this.bulletTimer = 0;
+    this.character = new Player(this.game, 256, 700)
+    this.camera.follow(this.character, Phaser.FOLLOW_TOPDOWN, 1, 1);
 
+    //HUD
+    this.hpBar = customMethods.newText(70, 580, 'HP: ' + this.character.health, 40, 0.5, 0.5, 'center', '#00d647', 'black', 4);
+    this.ammo = customMethods.newText(700, 580, customValues.activeAmmo + '^', 35, 0.5, 0.5, 'center', '#ffce3d', 'black', 4);
+    this.ammo.fixedToCamera = true;
+    this.hpBar.fixedToCamera = true;
+    //Fullscreen
+    this.input.keyboard.addKey(Phaser.Keyboard.P).onDown.add(this.switchFullScreen, this)
 
-    //this.bullets = customMethods.newGroup(16,'bullet');
-
-    // this.bullets.setAll('outOfBoundsKill', true);
-    // this.bullets.setAll('checkWorldBounds', true);
-
-    this.character = new Player(this.game, 256, 450)
-    this.camera.follow(this.character);
-    // this.character = this.add.sprite(512 ,256, 'hero');
-    // this.character.anchor.setTo(0.5,0.5);
-    // this.character.scale.setTo(2);
-    // this.character.smoothed = false;
-    //ANIMATION
-    // this.character.animations.add("Down", [0,1,2,3],12, true, true);
-    // this.character.animations.add("Left", [4,5,6,7],12, true, true);
-    // this.character.animations.add("Right", [8,9,10,11],12, true, true);
-    // this.character.animations.add("Up", [12,13,14,15],12, true, true);
-    // this.character.animations.add("FrontShoot", [16],12, true, true);
-    // this.character.animations.add("LeftShoot", [17],12, true, true);
-    // this.character.animations.add("RightShoot", [18],12, true, true);
-
-    this.enemy = new Enemy(this.game, 384, 512);
-    this.enemy.target = this.character;
-
-    // this.bullets = this.add.group();
-    // this.weapon = this.add.weapon(8, 'bullet', 0, this.bullets);
-    // this.weapon.bulletSpeed = 400;
-    // this.weapon.fireRate = 125;
-    // this.weapon.bounds = new Phaser.Rectangle(this.character.x, this.character.y, this.character.width, this.character.height*5);
-    // this.weapon.trackSprite(this.character, 0, -40, false);
-    // this.weapon.bulletKillType = Phaser.Weapon.KILL_WORLD_BOUNDS;
-    //this.weapon.autofire = true;
+    this.time.events.loop(customValues.spawnTimer, this.spawnEnemy, this);
+    this.enemies = this.add.group();
+    this.bonuses = this.add.group();
+    this.spawn_list = [[100,189], [1045, 178], [559, 1023]];
 
 
-    //buttons
-    // this.btn = this.add.button(32,32, "button", this.writeText, this, 0,0,1);
+    this.music = this.add.audio('Main_Theme', 0.3, true);
+    this.music.play("", 0, 0.7, true, )
+    src = this;
+  },
 
-    // this.physics.startSystem(Phaser.Physics.ARCADE);
-    // this.physics.enable(this.character);
-    // this.character.body.collideWorldBounds = true;
-
-
-
+  switchFullScreen:function()
+  {
+    if(this.scale.isFullScreen)
+    {
+      this.scale.stopFullScreen()
+    }
+    else
+    {
+      this.scale.startFullScreen(true, true);
+    }
   },
 
   update: function()
   {
-    this.physics.arcade.collide(this.character, this.enemy, this.collideEnemy, null, this);
-    this.physics.arcade.overlap(this.character.weapon.bullets, this.enemy, this.hitEnemy, null, this);
-    this.physics.arcade.collide([this.character, this.enemy], this.walls);
+    this.physics.arcade.collide(this.character, this.enemies, this.collideEnemy, null, this);
+    this.physics.arcade.overlap(this.enemies, this.character.weapon.bullets, this.hitEnemy, null, this);
+    this.physics.arcade.collide([this.character, this.enemies], this.walls);
+    this.physics.arcade.collide(this.enemies);
+    this.physics.arcade.collide(this.character.weapon.bullets, this.walls, this.kill, null, this);
+    this.physics.arcade.overlap([this.character, this.enemies], this.bonuses, this.al, null, this);
 
+
+    this.ammo.text = customValues.activeAmmo + '/' + customValues.ammo;
+
+  },
+  al: function(a,b)
+  {
+    if(b.type == 0)
+    {
+      a.heal(10);
+      this.hpBar.text = 'HP: ' + this.character.health;
+    }
+    else if(b.type == 1)
+    {
+      customValues.ammo+=10;
+      this.ammo.text = customValues.activeAmmo + '/' + customValues.ammo;
+    }
+    b.kill()
   },
 
   collideEnemy: function(a,b)
   {
       b.attack(a);
+      this.hpBar.text = 'HP: ' + this.character.health
+      this.camera.shake(0.01, 50);
   },
 
   hitEnemy: function(a,b)
   {
       b.kill();
       a.damage(this.character.dmg);
+  },
+
+  kill: function(object)
+  {
+    object.kill();
+  },
+
+  spawnEnemy: function()
+  {
+    if(customValues.countEnemies < customValues.enemiesLimit)
+    {
+        var spawn = this.spawn_list[Math.floor(Math.random()*3)];
+        var newEnemy = new Enemy(this.game, spawn[0], spawn[1]);
+        newEnemy.target = this.character;
+        this.enemies.add(newEnemy);
+        customValues.countEnemies++;
+    }
+    else
+    {
+      return
+    }
+  },
+
+  spawnBonus: function(x,y,type)
+  {
+    if(type >= 0 && type <= 1)
+    {
+      var bonus = new Bonus(src.game, x, y, type);
+      src.bonuses.add(bonus);
+    }
   }
 
 };

@@ -5,15 +5,22 @@ var Enemy = function(game, x, y)
   Phaser.Sprite.call(this,game, x, y, 'enemy');
   game.add.existing(this);
   this.anchor.setTo(0.5);
-  this.scale.setTo(2)
+  this.scale.setTo(1)
   game.physics.enable(this);
   this.body.collideWorldBounds = true;
-  this.movementSpeed = 100;
+  this.movementSpeed = 130;
   this.attackSpeed = 60;
   this.dmg = 10;
   this.health = this.maxHealth = 20;
   this.attackDelay = 0;
   this.target = null;
+  this.bonus;
+
+  //audio
+  this.die = this.game.add.audio('Die', 0.5);
+  this.hit = this.game.add.audio('Hit', 0.5);
+  //animation
+  this.animations.add("Move", [0,1,2],9, true, true);
 
 };
 
@@ -29,6 +36,7 @@ Enemy.prototype.update = function()
 
   if(this.target != null && this.target.alive)
   {
+    this.animations.play('Move', true);
     this.game.physics.arcade.moveToObject(this, this.target, this.movementSpeed);
   }
   this.body.moves = this.target.alive
@@ -53,5 +61,10 @@ Enemy.prototype.damage = function(dmg)
 
 Enemy.prototype.kill = function()
 {
+  this.die.play();
+  var bonus = Math.floor(Math.random()*4);
+  this.game.state.states[this.game.state.current].__proto__.spawnBonus(this.x, this.y, bonus);
+  // this.game.spawnBonus(this.x, this.y);
   Phaser.Sprite.prototype.kill.call(this)
+  customValues.countEnemies --;
 }

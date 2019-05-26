@@ -22,5 +22,13 @@ var customMethods =
     group.setAll("anchor.y", anchorY);
 
     return group;
+  },
+
+  newText: function(x, y, text, fontSize = 20, anchorX = 0.5, anchorY = 0.5, alignment = 'center', textColor = 'white', strokeColor='white', strokeSize=1)
+  {
+    var text = Project.game.add.text(x, y, text, {font: fontSize + "px Autour One", fill:textColor, align: alignment, stroke:strokeColor, strokeThickness:strokeSize});
+    text.anchor.setTo(anchorX, anchorY);
+
+    return text;
   }
 };

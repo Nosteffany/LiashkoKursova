@@ -11,6 +11,8 @@ Project.launcher.prototype =
     this.game.stage.disableVisibilityChange = true;
     this.game.renderer.renderSession.roundPixels = true;
     this.game.stage.backgroundColor = "#000000";
+    this.game.scale.fullScreenScaleMode = Phaser.ScaleManager.USER_SCALE;
+    this.game.scale.setUserScale(1.5, 1.5, 256, 256, true, true);
   },
 
   preload: function()
