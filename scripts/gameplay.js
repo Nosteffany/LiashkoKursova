@@ -2,6 +2,18 @@
 
 
 var Project = Project||{};
+
+Project.addNewPlayer = function(id, x, y)
+{
+  Project.playerMap[id] = new Player(this.game, x, y, id);
+};
+
+Project.removePlayer = function(id)
+{
+  Project.playerMap[id].destroy();
+  delete this.playerMap[id];
+}
+
 var src;
 Project.gameplay = function(game){};
 
@@ -11,7 +23,8 @@ Project.gameplay.prototype =
   preload: function()
   {
     this.stage.backgroundColor = "#3b4047";
-    this.b;
+
+    Project.playerMap = {};
 
     this.map = this.add.tilemap('map');
     this.map.addTilesetImage('TS2','tiles');
@@ -24,26 +37,27 @@ Project.gameplay.prototype =
 
     this.map.setCollisionByExclusion([], true, 'L3');
 
-    this.character = new Player(this.game, 256, 700)
-    this.camera.follow(this.character, Phaser.FOLLOW_TOPDOWN, 1, 1);
-
-    //HUD
-    this.hpBar = customMethods.newText(70, 580, 'HP: ' + this.character.health, 40, 0.5, 0.5, 'center', '#00d647', 'black', 4);
-    this.ammo = customMethods.newText(700, 580, customValues.activeAmmo + '^', 35, 0.5, 0.5, 'center', '#ffce3d', 'black', 4);
-    this.ammo.fixedToCamera = true;
-    this.hpBar.fixedToCamera = true;
-    //Fullscreen
-    this.input.keyboard.addKey(Phaser.Keyboard.P).onDown.add(this.switchFullScreen, this)
-
-    this.time.events.loop(customValues.spawnTimer, this.spawnEnemy, this);
-    this.enemies = this.add.group();
-    this.bonuses = this.add.group();
-    this.spawn_list = [[100,189], [1045, 178], [559, 1023]];
+    // //this.character = new Player(this.game, 256, 700)
+    // this.camera.follow(this.character, Phaser.FOLLOW_TOPDOWN, 1, 1);
+    //
+    // //HUD
+    // this.hpBar = customMethods.newText(70, 580, 'HP: ' + this.character.health, 40, 0.5, 0.5, 'center', '#00d647', 'black', 4);
+    // this.ammo = customMethods.newText(700, 580, customValues.activeAmmo + '^', 35, 0.5, 0.5, 'center', '#ffce3d', 'black', 4);
+    // this.ammo.fixedToCamera = true;
+    // this.hpBar.fixedToCamera = true;
+    // //Fullscreen
+    // this.input.keyboard.addKey(Phaser.Keyboard.P).onDown.add(this.switchFullScreen, this)
+    //
+    // this.time.events.loop(customValues.spawnTimer, this.spawnEnemy, this);
+    // this.enemies = this.add.group();
+    // this.bonuses = this.add.group();
+    // this.spawn_list = [[100,189], [1045, 178], [559, 1023]];
 
 
     this.music = this.add.audio('Main_Theme', 0.3, true);
     this.music.play("", 0, 0.7, true, )
     src = this;
+    Client.askNewPlayer();
   },
 
   switchFullScreen:function()
@@ -60,15 +74,15 @@ Project.gameplay.prototype =
 
   update: function()
   {
-    this.physics.arcade.collide(this.character, this.enemies, this.collideEnemy, null, this);
-    this.physics.arcade.overlap(this.enemies, this.character.weapon.bullets, this.hitEnemy, null, this);
-    this.physics.arcade.collide([this.character, this.enemies], this.walls);
-    this.physics.arcade.collide(this.enemies);
-    this.physics.arcade.collide(this.character.weapon.bullets, this.walls, this.kill, null, this);
-    this.physics.arcade.overlap([this.character, this.enemies], this.bonuses, this.al, null, this);
+    // this.physics.arcade.collide(this.character, this.enemies, this.collideEnemy, null, this);
+    // this.physics.arcade.overlap(this.enemies, this.character.weapon.bullets, this.hitEnemy, null, this);
+    // this.physics.arcade.collide([this.character, this.enemies], this.walls);
+    // this.physics.arcade.collide(this.enemies);
+    // this.physics.arcade.collide(this.character.weapon.bullets, this.walls, this.kill, null, this);
+    // this.physics.arcade.overlap([this.character, this.enemies], this.bonuses, this.al, null, this);
 
 
-    this.ammo.text = customValues.activeAmmo + '/' + customValues.ammo;
+    //this.ammo.text = customValues.activeAmmo + '/' + customValues.ammo;
 
   },
   al: function(a,b)
@@ -127,6 +141,13 @@ Project.gameplay.prototype =
       var bonus = new Bonus(src.game, x, y, type);
       src.bonuses.add(bonus);
     }
-  }
+  },
+
+  // addNewPlayer: function(id, x, y)
+  // {
+  //   this.playerMap[id] = new Player(this.game, x, y, id);
+  // },
+
+
 
 };

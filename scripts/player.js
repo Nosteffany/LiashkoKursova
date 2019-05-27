@@ -1,9 +1,11 @@
 "use strict";
 
-var Player = function(game, x=256,y=256)
+var Player = function(game, x=256,y=256, id)
 {
   Phaser.Sprite.call(this,game, x, y, "hero");
+  // player cfg
   game.add.existing(this);
+  this.id = id;
   this.anchor.setTo(0.5);
   this.scale.setTo(1.5);
   this.smoothed = false;
@@ -12,10 +14,9 @@ var Player = function(game, x=256,y=256)
   this.dmg = 5;
   this.health = this.maxHealth = 100;
 
+  // weapon
   this.bullets = game.add.group();
   this.weapon = game.add.weapon(20, 'bullet', 0, this.bullets);
-
-
   this.weapon.bulletSpeed = 400;
   this.weapon.fireRate = 100;
   this.weapon.trackSprite(this, 0, 0, false);
@@ -23,16 +24,17 @@ var Player = function(game, x=256,y=256)
   this.weapon.bulletKillType = Phaser.Weapon.KILL_LIFESPAN;
   this.weapon.fireLimit = 20;
 
-
+  //sound effects
   this.stepA = this.game.add.audio('Step');
   this.shooting = this.game.add.audio('Shoot',0.5);
   this.reloading = this.game.add.audio('Reload',0.4);
+  // on fire event
   this.weapon.onFire.add(fire, this);
 
-  // this.weapon.onFire =
 
+  // keyboard event listener
   this.cursors = game.input.keyboard.createCursorKeys();
-
+  // animations
   this.animations.add("Down", [0,1,2,3],12, true, true);
   this.animations.add("Left", [4,5,6,7],12, true, true);
   this.animations.add("Right", [8,9,10,11],12, true, true);
@@ -41,7 +43,7 @@ var Player = function(game, x=256,y=256)
   this.animations.add("LeftShoot", [17],12, true, true);
   this.animations.add("RightShoot", [18],12, true, true);
 
-
+  //on fire handler
   function fire()
   {
     customValues.activeAmmo --;
@@ -54,8 +56,9 @@ Player.prototype.constructor = Player;
 
 Player.prototype.update = function()
 {
-
+// move player
   this.body.velocity.setTo(0);
+// vertical moving
 if(!this.game.input.activePointer.isDown)
 {
   if(this.cursors.up.isDown || this.game.input.keyboard.isDown(Phaser.Keyboard.W))
@@ -67,7 +70,7 @@ if(!this.game.input.activePointer.isDown)
   {
     this.body.velocity.y = customValues.playerSpeed;
   }
-  // HORIZONTAL
+  // horizontal moving
  if(this.cursors.left.isDown || this.game.input.keyboard.isDown(Phaser.Keyboard.A))
   {
     this.body.velocity.x = -customValues.playerSpeed;
@@ -78,7 +81,7 @@ if(!this.game.input.activePointer.isDown)
     this.body.velocity.x = customValues.playerSpeed;
   }
 }
-  //ANIMATIONS
+  // play animations
 
   if(this.cursors.up.isDown || this.game.input.keyboard.isDown(Phaser.Keyboard.W))
   {
@@ -117,7 +120,7 @@ if(!this.game.input.activePointer.isDown)
   }
 
 
-
+  // rotate sprite to mouse pointer
   if(this.game.input.activePointer.isDown && this.alive)
   {
       var targetAngle = this.game.physics.arcade.angleToPointer(this)
@@ -148,7 +151,7 @@ if(!this.game.input.activePointer.isDown)
 
       }
     }
-
+// reloading
 if(this.game.input.keyboard.isDown(Phaser.Keyboard.R) && customValues.ammo > 0 && !this.reloading.isPlaying)
 {
 

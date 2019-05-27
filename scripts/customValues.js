@@ -8,6 +8,6 @@ var customValues =
   activeAmmo: 20,
   ammo:100,
   countEnemies: 0,
-  enemiesLimit: 6,
+  enemiesLimit: 1,
   spawnTimer: 1500
 }
