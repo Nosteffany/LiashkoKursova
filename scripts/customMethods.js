@@ -30,6 +30,7 @@ var customMethods =
     text.anchor.setTo(anchorX, anchorY);
 
     return text;
+<<<<<<< HEAD
   },
 
   // newButton: function(x, y, key, callback, onInputOverEvent = null, anchorX = 0.5, anchorY = 0.5)
@@ -42,4 +43,7 @@ var customMethods =
   //   }
   //   return button;
   // }
+=======
+  }
+>>>>>>> c131de532495b4ad02105d251c9c6d55104d6782
 };

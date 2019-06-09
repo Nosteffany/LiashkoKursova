@@ -32,9 +32,18 @@ var Enemy = function(game, x, y, type)
   }
 
   game.add.existing(this);
+<<<<<<< HEAD
+=======
+  this.anchor.setTo(0.5);
+  this.scale.setTo(1)
+>>>>>>> c131de532495b4ad02105d251c9c6d55104d6782
   game.physics.enable(this);
   this.anchor.setTo(0.5);
   this.body.collideWorldBounds = true;
+<<<<<<< HEAD
+=======
+  this.movementSpeed = 130;
+>>>>>>> c131de532495b4ad02105d251c9c6d55104d6782
   this.attackSpeed = 60;
   this.attackDelay = 0;
   this.type = type;
@@ -106,14 +115,20 @@ Enemy.prototype.kill = function()
 {
   this.die.play();
   var bonus = Math.floor(Math.random()*4);
+<<<<<<< HEAD
   if(this.type == 1)
   {
     bonus = 5;
   }
 
+=======
+>>>>>>> c131de532495b4ad02105d251c9c6d55104d6782
   this.game.state.states[this.game.state.current].__proto__.spawnBonus(this.x, this.y, bonus);
   // this.game.spawnBonus(this.x, this.y);
   Phaser.Sprite.prototype.kill.call(this)
   customValues.countEnemies --;
+<<<<<<< HEAD
   customValues.kills ++;
+=======
+>>>>>>> c131de532495b4ad02105d251c9c6d55104d6782
 }

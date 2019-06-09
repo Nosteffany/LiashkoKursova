@@ -10,7 +10,10 @@ Project.loadingScreen.prototype =
   {
     this.load.spritesheet('hero', 'assets/hero1.png', 19, 42);
     this.load.spritesheet('enemy', 'assets/Serot.png', 50, 47);
+<<<<<<< HEAD
     this.load.spritesheet('enemy1', 'assets/enemy1.png', 96, 96);
+=======
+>>>>>>> c131de532495b4ad02105d251c9c6d55104d6782
     // this.load.image('enemy', 'assets/cube1.png');
     this.load.tilemap('map', 'assets/MAP.json', null, Phaser.Tilemap.TILED_JSON);
 
@@ -19,6 +22,7 @@ Project.loadingScreen.prototype =
     this.load.image('tiles', 'assets/set.png');
 
     this.load.image('Aid', 'assets/aid.png');
+<<<<<<< HEAD
     this.load.spritesheet('Button', 'assets/button.png', 251, 60);
     this.load.image('Ammo', 'assets/ammo.png');
     this.load.image('bullet', 'assets/bullet.png');
@@ -28,6 +32,11 @@ Project.loadingScreen.prototype =
     this.load.audio('Main_Theme', 'music/main_theme.wav');
     this.load.audio('Ending', 'music/ending.mp3');
     this.load.audio('Moan', 'music/moan.wav');
+=======
+    this.load.image('Ammo', 'assets/ammo.png');
+
+    this.load.audio('Main_Theme', 'music/main_theme.mp3');
+>>>>>>> c131de532495b4ad02105d251c9c6d55104d6782
     this.load.audio('Step', 'music/footstep.wav');
     this.load.audio('Shoot', 'music/shoot1.wav');
     this.load.audio('Reload', 'music/reload.wav');
